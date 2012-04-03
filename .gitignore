@@ -1,0 +1,8 @@
+*.beam
+.eunit
+deps/*
+apps/bcexchange/ebin
+*~
+dev/*
+doc/*
+rel/mynode
