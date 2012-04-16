@@ -5,4 +5,4 @@ apps/bcexchange/ebin
 *~
 dev/*
 doc/*
-rel/mynode
+rel/bcexchange

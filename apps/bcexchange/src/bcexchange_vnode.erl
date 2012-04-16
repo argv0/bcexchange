@@ -17,19 +17,24 @@
          handle_coverage/4,
          handle_exit/3]).
 
--record(state, {partition}).
+-record(state, {partition, ord_idx}).
 
 %% API
 start_vnode(I) ->
     riak_core_vnode_master:get_vnode_pid(I, ?MODULE).
 
 init([Partition]) ->
-    {ok, #state { partition=Partition }}.
+    {ok, Ring} = riak_core_ring_manager:get_my_ring(),
+    OrdIdx = bcexchange_utils:ord_idx(Partition, Ring),
+    bcexchange_listener_sup:start_listener(OrdIdx),
+    {ok, #state {partition=Partition,
+                 ord_idx=OrdIdx}}.
 
 %% Sample command: respond to a ping
 handle_command(ping, _Sender, State) ->
     {reply, {pong, State#state.partition}, State};
 handle_command(Message, _Sender, State) ->
+
     ?PRINT({unhandled_command, Message}),
     {noreply, State}.
 
