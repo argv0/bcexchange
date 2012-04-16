@@ -16,9 +16,10 @@ init([PortOffset]) ->
     PortNum = 51200 + PortOffset,
     {ok, #state{portnum=PortNum}}.
 
-sock_opts() -> [binary, {packet, 4}, {reuseaddr, true}, {backlog, 64}].
+sock_opts() -> [binary, {header, 1},
+                {packet, 4}, {reuseaddr, true}, {backlog, 64}].
 
-handle_call(handoff_port, _From, State=#state{portnum=P}) ->
+handle_call(portnum, _From, State=#state{portnum=P}) ->
     {reply, {ok, P}, State}.
 
 handle_cast(_Msg, State) -> {noreply, State}.
@@ -30,7 +31,7 @@ terminate(_Reason, _State) -> ok.
 code_change(_OldVsn, State, _Extra) -> {ok, State}.
 
 new_connection(Socket, State = #state{ssl_opts = SslOpts}) ->
-    {ok, Pid} = riak_core_handoff_receiver:start_link(SslOpts),
+    {ok, Pid} = bcexchange_tcp_server:start_link(SslOpts),
     gen_tcp:controlling_process(Socket, Pid),
-    ok = riak_core_handoff_receiver:set_socket(Pid, Socket),
+    ok = bcexchange_tcp_server:set_socket(Pid, Socket),
     {ok, State}.

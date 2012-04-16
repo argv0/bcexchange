@@ -6,3 +6,4 @@ apps/bcexchange/ebin
 dev/*
 doc/*
 rel/bcexchange
+erl_crash.dump
