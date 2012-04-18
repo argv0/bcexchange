@@ -20,7 +20,7 @@ test:
 	$(REBAR) skip_deps=true eunit
 
 rel: all
-	$(REBAR) generate
+	$(REBAR) skip_deps=true generate
 
 relclean:
 	rm -rf rel/bcexchange
