@@ -53,4 +53,11 @@ code_change(_OldVsn, StateName, State, _Extra) ->
     {ok, StateName, State}.
 
 handle_msg(?BCC_MSG_CONFIG, MsgProps, State) ->
-    io:format("config props: ~p~n", [MsgProps]).
+    io:format("config props: ~p~n", [MsgProps]),
+    State;
+handle_msg(?BCC_MSG_REGISTER, _MsgProps, State) ->
+    State;
+handle_msg(?BCC_MSG_UNREGISTER, _MsgProps, State) ->
+    State;
+handle_msg(?BCC_MSG_SETSTAT, _MsgProps, State) ->
+    State.

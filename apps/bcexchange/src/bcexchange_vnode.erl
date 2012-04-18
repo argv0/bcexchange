@@ -17,7 +17,7 @@
          handle_coverage/4,
          handle_exit/3]).
 
--record(state, {partition, ord_idx}).
+-record(state, {partition, riak_pid, ord_idx}).
 
 %% API
 start_vnode(I) ->
@@ -27,7 +27,9 @@ init([Partition]) ->
     {ok, Ring} = riak_core_ring_manager:get_my_ring(),
     OrdIdx = bcexchange_utils:ord_idx(Partition, Ring),
     bcexchange_listener_sup:start_listener(OrdIdx),
+    {ok, RiakPid} = riak_moss_utils:riak_connection(),
     {ok, #state {partition=Partition,
+                 riak_pid=RiakPid,
                  ord_idx=OrdIdx}}.
 
 %% Sample command: respond to a ping

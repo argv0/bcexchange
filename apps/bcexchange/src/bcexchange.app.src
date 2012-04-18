@@ -11,5 +11,8 @@
                   riak_core
                  ]},
   {mod, { bcexchange_app, []}},
-  {env, []}
+  {env, [
+         %% Size, MaxOverflow
+         {riakc_pool, {128, 0}}
+        ]}
  ]}.

@@ -57,6 +57,16 @@ init(_Args) ->
                   {riak_core_vnode_master, start_link, [bcexchange_vnode]},
                   permanent, 5000, worker, [riak_core_vnode_master]},
 
+    {ok, {RiakCWorkers, RiakCMaxOverflow}} = application:get_env(riak_moss, riakc_pool),
+    RiakCStop = fun(Worker) -> riak_moss_riakc_pool_worker:stop(Worker) end,
+    RiakCPool = {riakc_pool,
+                 {poolboy, start_link, [[{name, {local, riakc_pool}},
+                                         {worker_module, riak_moss_riakc_pool_worker},
+                                         {size, RiakCWorkers},
+                                         {max_overflow, RiakCMaxOverflow},
+                                         {stop_fun, RiakCStop}]]},
+                 permanent, 5000, worker, [poolboy]},
+
     { ok,
         { {one_for_one, 5, 10},
-          [ListenerSup, VMaster, Web]}}.
+          [RiakCPool, ListenerSup, VMaster, Web]}}.
